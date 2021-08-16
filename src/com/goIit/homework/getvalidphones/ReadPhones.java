@@ -1,7 +1,8 @@
 package com.goIit.homework.getvalidphones;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 class ReadPhones {
 
@@ -20,7 +21,7 @@ class ReadPhones {
     return phone;
   }
 
-  private ArrayList<ReadPhones> getCorrectPhoneNumbers() {
+  public ArrayList<ReadPhones> getCorrectPhoneNumbers() {
     ArrayList<ReadPhones> readPhones = new ArrayList<>();
     try(BufferedReader file = new BufferedReader(new FileReader(FILE_NAME)))
     {
@@ -29,9 +30,9 @@ class ReadPhones {
       while((stringFile = file.readLine())!=null){
         String[] line = stringFile.split("\n");
         for (String l : line) {
+          String str2 = "^((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[-]*\\d{4}$";
           try {
-            if ((l.charAt(0) == '(' && l.charAt(4) == ')' && l.charAt(9) == '-' && checkPhone(l)) ||
-                (l.charAt(3) == '-' && l.charAt(7) == '-' && checkPhone(l))) {
+            if (Pattern.compile(str2).matcher(l).matches() ) {
               readPhones.add(new ReadPhones(l));
             }
           } catch (StringIndexOutOfBoundsException ex) {
@@ -45,21 +46,6 @@ class ReadPhones {
     }
     return readPhones;
   }
-
-  private boolean checkPhone(String phoneNumber) {
-    phoneNumber = phoneNumber
-        .replace("-", "")
-        .replace("(", "")
-        .replace(")" , "")
-        .replace(" ", "");
-    int count = 0;
-        for (int i = 0; i < phoneNumber.length(); i++) {
-          if ((int)phoneNumber.charAt(i) >= 48 && phoneNumber.charAt(i) <= 57) {
-            count++;
-          }
-        }
-        return count == phoneNumber.length();
-    }
 
     public void printValidPhones() {
 
